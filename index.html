@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toko Online dengan Keranjang Belanja</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Animasi untuk notifikasi */
+        @keyframes slideIn {
+            from {transform: translateY(-20px); opacity: 0;}
+            to {transform: translateY(0); opacity: 1;}
+        }
+        
+        @keyframes slideOut {
+            from {transform: translateY(0); opacity: 1;}
+            to {transform: translateY(-20px); opacity: 0;}
+        }
+        
+        .notification {
+            animation: slideIn 0.5s forwards;
+        }
+        
+        .notification.hide {
+            animation: slideOut 0.5s forwards;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <header class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-bold text-indigo-700">Toko Online Kami</h1>
+            <div class="relative">
+                <button id="cart-button" class="flex items-center p-2 rounded-lg bg-white shadow hover:bg-gray-50">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    <span id="cart-count" class="ml-1">0</span>
+                </button>
+                <div id="cart-dropdown" class="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl z-10 hidden">
+                    <div class="p-4 border-b">
+                        <h3 class="font-semibold text-lg">Keranjang Belanja</h3>
+                    </div>
+                    <div id="cart-items" class="max-h-96 overflow-y-auto p-4">
+                        <p class="text-gray-500 text-center">Keranjang kosong</p>
+                    </div>
+                    <div class="p-4 border-t">
+                        <div class="flex justify-between mb-4">
+                            <span class="font-semibold">Total:</span>
+                            <span id="cart-total" class="font-bold">Rp 0</span>
+                        </div>
+                        <button class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition">Checkout</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Notification -->
+        <div id="notification" class="fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg hidden notification"></div>
+        
+        <!-- Products -->
+        <h2 class="text-2xl font-semibold mb-4">Produk Kami</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Product 1 -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
+                <div class="h-48 overflow-hidden">
+                    <img src="https://placehold.co/400x300" alt="Smartphone terbaru dengan layar OLED dan kamera ganda" class="w-full h-full object-cover" />
+                </div>
+                <div class="p-4">
+                    <h3 class="text-lg font-semibold mb-2">Smartphone Premium</h3>
+                    <p class="text-gray-600 mb-4">Smartphone dengan performa tinggi dan kamera berkualitas.</p>
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-indigo-600">Rp 5.999.000</span>
+                        <button onclick="addToCart('Smartphone Premium', 5999000, 'https://placehold.co/400x300')" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">+ Keranjang</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Product 2 -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
+                <div class="h-48 overflow-hidden">
+                    <img src="https://placehold.co/400x300" alt="Laptop profesional tipis dengan layar retina dan prosesor cepat" class="w-full h-full object-cover" />
+                </div>
+                <div class="p-4">
+                    <h3 class="text-lg font-semibold mb-2">Laptop Profesional</h3>
+                    <p class="text-gray-600 mb-4">Laptop dengan performa tinggi untuk produktivitas.</p>
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-indigo-600">Rp 12.499.000</span>
+                        <button onclick="addToCart('Laptop Profesional', 12499000, 'https://placehold.co/400x300')" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">+ Keranjang</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Product 3 -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
+                <div class="h-48 overflow-hidden">
+                    <img src="https://placehold.co/400x300" alt="Wireless headphone premium dengan teknologi noise cancelling" class="w-full h-full object-cover" />
+                </div>
+                <div class="p-4">
+                    <h3 class="text-lg font-semibold mb-2">Headphone Premium</h3>
+                    <p class="text-gray-600 mb-4">Headphone dengan kualitas suara terbaik.</p>
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-indigo-600">Rp 2.499.000</span>
+                        <button onclick="addToCart('Headphone Premium', 2499000, 'https://placehold.co/400x300')" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">+ Keranjang</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Product 4 -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
+                <div class="h-48 overflow-hidden">
+                    <img src="https://placehold.co/400x300" alt="Jam tangan mewah dengan desain elegan dan water resistant" class="w-full h-full object-cover" />
+                </div>
+                <div class="p-4">
+                    <h3 class="text-lg font-semibold mb-2">Jam Tangan Mewah</h3>
+                    <p class="text-gray-600 mb-4">Jam tangan dengan desain elegan dan tahan air.</p>
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-indigo-600">Rp 3.999.000</span>
+                        <button onclick="addToCart('Jam Tangan Mewah', 3999000, 'https://placehold.co/400x300')" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">+ Keranjang</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Product 5 -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
+                <div class="h-48 overflow-hidden">
+                    <img src="https://placehold.co/400x300" alt="Speaker bluetooth portabel dengan suara jernih dan baterai tahan lama" class="w-full h-full object-cover" />
+                </div>
+                <div class="p-4">
+                    <h3 class="text-lg font-semibold mb-2">Speaker Bluetooth</h3>
+                    <p class="text-gray-600 mb-4">Speaker portabel dengan kualitas suara tinggi.</p>
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-indigo-600">Rp 1.299.000</span>
+                        <button onclick="addToCart('Speaker Bluetooth', 1299000, 'https://placehold.co/400x300')" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">+ Keranjang</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Product 6 -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
+                <div class="h-48 overflow-hidden">
+                    <img src="https://placehold.co/400x300" alt="Smartwatch dengan fitur kesehatan dan tampilan AMOLED" class="w-full h-full object-cover" />
+                </div>
+                <div class="p-4">
+                    <h3 class="text-lg font-semibold mb-2">Smartwatch</h3>
+                    <p class="text-gray-600 mb-4">Smartwatch dengan fitur kesehatan lengkap.</p>
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-indigo-600">Rp 1.899.000</span>
+                        <button onclick="addToCart('Smartwatch', 1899000, 'https://placehold.co/400x300')" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">+ Keranjang</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data keranjang belanja
+        let cart = [];
+        
+        // Format angka menjadi format mata uang Indonesia
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(amount);
+        }
+        
+        // Tambah produk ke keranjang
+        function addToCart(name, price, image) {
+            const existingItem = cart.find(item => item.name === name);
+            
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                cart.push({
+                    name,
+                    price,
+                    image,
+                    quantity: 1
+                });
+            }
+            
+            updateCart();
+            showNotification(`${name} telah ditambahkan ke keranjang`);
+        }
+        
+        // Update tampilan keranjang
+        function updateCart() {
+            // Update jumlah item di ikon keranjang
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cart-count').textContent = totalItems;
+            
+            // Update daftar item di dropdown keranjang
+            const cartItemsElement = document.getElementById('cart-items');
+            
+            if (cart.length === 0) {
+                cartItemsElement.innerHTML = '<p class="text-gray-500 text-center">Keranjang kosong</p>';
+            } else {
+                cartItemsElement.innerHTML = cart.map(item => `
+                    <div class="flex items-center mb-4 pb-4 border-b">
+                        <div class="w-14 h-14 rounded-md overflow-hidden mr-3">
+                            <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover" />
+                        </div>
+                        <div class="flex-grow">
+                            <h4 class="font-medium">${item.name}</h4>
+                            <div class="flex justify-between items-center text-sm text-gray-600">
+                                <span>${formatCurrency(item.price)}</span>
+                                <div class="flex items-center">
+                                    <button onclick="changeQuantity('${item.name}', -1)" class="px-2 rounded hover:bg-gray-100">-</button>
+                                    <span class="mx-2">${item.quantity}</span>
+                                    <button onclick="changeQuantity('${item.name}', 1)" class="px-2 rounded hover:bg-gray-100">+</button>
+                                </div>
+                                <span>${formatCurrency(item.price * item.quantity)}</span>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            // Update total harga
+            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            document.getElementById('cart-total').textContent = formatCurrency(totalPrice);
+        }
+        
+        // Ubah jumlah item di keranjang
+        function changeQuantity(name, change) {
+            const item = cart.find(item => item.name === name);
+            
+            if (item) {
+                item.quantity += change;
+                
+                if (item.quantity <= 0) {
+                    // Hapus item jika jumlah <= 0
+                    cart = cart.filter(item => item.name !== name);
+                }
+                
+                updateCart();
+            }
+        }
+        
+        // Tampilkan notifikasi
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.remove('hidden', 'hide');
+            notification.classList.add('notification');
+            
+            setTimeout(() => {
+                notification.classList.add('hide');
+                setTimeout(() => {
+                    notification.classList.add('hidden');
+                }, 500);
+            }, 3000);
+        }
+        
+        // Toggle dropdown keranjang
+        document.getElementById('cart-button').addEventListener('click', function() {
+            document.getElementById('cart-dropdown').classList.toggle('hidden');
+        });
+        
+        // Sembunyikan dropdown saat mengklik di luar
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('#cart-button') && !event.target.closest('#cart-dropdown')) {
+                document.getElementById('cart-dropdown').classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
